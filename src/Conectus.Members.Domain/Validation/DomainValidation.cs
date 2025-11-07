@@ -10,7 +10,7 @@ namespace Conectus.Members.Domain.Validation
             => ThrowIf<T>(target is null, $"{fieldName} should not be null");
 
         public static void NotNull<T>(DateTime? target, string fieldName) where T : class
-             => ThrowIf<T>(target is null || DateTime.MinValue == target , $"{fieldName} should not be null");
+             => ThrowIf<T>(target is null || DateTime.MinValue == target, $"{fieldName} should not be null");
 
         public static void NotNullOrEmpty<T>(string? target, string fieldName) where T : class
             => ThrowIf<T>(string.IsNullOrWhiteSpace(target), $"{fieldName} should not be empty or null");
@@ -23,6 +23,9 @@ namespace Conectus.Members.Domain.Validation
 
         public static void Between<T>(double? target, int min, int max, string fieldName) where T : class
             => ThrowIf<T>(target.HasValue && (target < min || target > max), $"{fieldName} must be between {min} and {max}.");
+        public static void InvalidAtrtibute<T>(string fieldName, bool target = true) where T : class
+            => ThrowIf<T>(target, $"{fieldName} is invalid.");
+
 
         private static void ThrowIf<T>(bool condition, string message) where T : class
         {

@@ -68,9 +68,5 @@ namespace Conectus.Members.Infra.CrossCutting.Commons.Extensions
 
             return true;
         }
-        public static bool ValidateRG(this string value)
-        {
-            return RemoveNotNumbers(value).Length >= 5;
-        }
     }
 }

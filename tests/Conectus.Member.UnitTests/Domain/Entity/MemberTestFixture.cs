@@ -24,7 +24,6 @@ namespace Conectus.Members.UnitTests.Domain.Entity
             => type switch
             {
                 DocumentType.CPF => new IdentifierDocument(type, Faker.Person.Cpf()),
-                DocumentType.RG => new IdentifierDocument(type, Faker.Random.Replace("##.###.###-#")),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
@@ -36,8 +35,6 @@ namespace Conectus.Members.UnitTests.Domain.Entity
 
         public PhoneNumber GetInvalidPhoneNumber(string? phone)
             => PhoneNumber.Create(phone);
-
-
     }
 
 

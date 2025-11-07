@@ -1,14 +1,15 @@
 ﻿using Conectus.Members.Domain.Enum;
+using Conectus.Members.Domain.Validation;
 using Conectus.Members.Infra.CrossCutting.Commons.Extensions;
 
 
 namespace Conectus.Members.Domain.ValueObject
 {
-    public sealed class IdentifierDocument : IEquatable<IdentifierDocument>
+    public sealed class IdentifierDocument : SeedWork.ValueObject
     {
         public DocumentType Type { get; private set; }
         public string Document { get; private set; }
-        public bool IsValid => Type.Equals(DocumentType.CPF) ? Document.ValidateFederalRegistration() : Document.ValidateRG();
+        public bool IsValid => Type.Equals(DocumentType.CPF) ? Document.ValidateFederalRegistration() : false;
 
         protected IdentifierDocument() { }
 
@@ -16,14 +17,27 @@ namespace Conectus.Members.Domain.ValueObject
         {
             Type = type;
             Document = document;
+            Validate();
         }
 
-        public override bool Equals(object? obj) => Equals(obj as IdentifierDocument);
+        private void Validate()
+        {
+            DomainValidation.NotNull<IdentifierDocument>(Type, nameof(DocumentType));
+            DomainValidation.NotNullOrEmpty<IdentifierDocument>(Document, nameof(Document));
 
-        public bool Equals(IdentifierDocument? other)
-            => other != null && Document == other.Document && Type == other.Type;
+            if (!IsValid)
+                DomainValidation.InvalidAtrtibute<IdentifierDocument>(nameof(Document));
+        }
 
-        public override int GetHashCode()
+        public override bool Equals(SeedWork.ValueObject? other)
+        {
+            if (other is null) return false;
+            return other is IdentifierDocument document &&
+             Document == document.Document &&
+             Type == document.Type;
+        }
+
+        protected override int GetCustomHashCode()
             => HashCode.Combine(Document, Type);
 
         public override string ToString()
