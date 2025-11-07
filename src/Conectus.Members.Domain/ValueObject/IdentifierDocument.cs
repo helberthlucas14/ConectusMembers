@@ -11,8 +11,6 @@ namespace Conectus.Members.Domain.ValueObject
         public string Document { get; private set; }
         public bool IsValid => Type.Equals(DocumentType.CPF) ? Document.ValidateFederalRegistration() : false;
 
-        protected IdentifierDocument() { }
-
         public IdentifierDocument(DocumentType type, string document)
         {
             Type = type;

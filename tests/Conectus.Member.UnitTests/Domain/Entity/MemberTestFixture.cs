@@ -28,13 +28,11 @@ namespace Conectus.Members.UnitTests.Domain.Entity
             };
 
         public PhoneNumber GetPhoneNumber(string? phoneNumber = "")
-            => PhoneNumber.Create(
+            => new PhoneNumber(
                 string.IsNullOrWhiteSpace(phoneNumber) ?
                 Faker.Phone.PhoneNumber() :
                 phoneNumber);
 
-        public PhoneNumber GetInvalidPhoneNumber(string? phone)
-            => PhoneNumber.Create(phone);
     }
 
 

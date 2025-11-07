@@ -1,52 +1,51 @@
-﻿using System.Text.RegularExpressions;
+﻿using Conectus.Members.Domain.Validation;
+using System.Text.RegularExpressions;
 
 namespace Conectus.Members.Domain.ValueObject
 {
-    public sealed class PhoneNumber : IEquatable<PhoneNumber>
+    public sealed class PhoneNumber : SeedWork.ValueObject
     {
         public string Value { get; }
 
-        private PhoneNumber(string value)
+        public PhoneNumber(string value)
         {
-            Value = value;
-        }
+            if (string.IsNullOrWhiteSpace(value))
+                DomainValidation.NotNullOrEmpty<PhoneNumber>(value, nameof(PhoneNumber));
 
-        public static PhoneNumber Create(string rawValue)
-        {
-            if (string.IsNullOrWhiteSpace(rawValue))
-                throw new ArgumentException("Phone number cannot be empty.", nameof(rawValue));
-
-            var normalized = Normalize(rawValue);
+            var normalized = Normalize(value);
 
             if (!IsValid(normalized))
-                throw new ArgumentException($"Invalid phone number format: {rawValue}", nameof(rawValue));
+                DomainValidation.InvalidAtrtibute<PhoneNumber>(nameof(PhoneNumber));
 
-            return new PhoneNumber(normalized);
+            Value = normalized;
         }
+
 
         private static string Normalize(string value)
         {
-            return Regex.Replace(value, @"[\s\-\(\)]", "");
+            var digits = Regex.Replace(value, @"\D", "");
+
+            if (digits.StartsWith("55"))
+                return $"+{digits}";
+
+            return $"+55{digits}";
         }
 
         private static bool IsValid(string value)
         {
-            return Regex.IsMatch(value, @"^\+?[1-9]\d{1,14}$");
+            return Regex.IsMatch(value, @"^\+55\d{11}$");
         }
 
         public override string ToString() => Value;
 
-        public override bool Equals(object obj) => Equals(obj as PhoneNumber);
+        protected override int GetCustomHashCode() => Value.GetHashCode();
 
-        public bool Equals(PhoneNumber other)
-            => other is not null && Value == other.Value;
-
-        public override int GetHashCode() => Value.GetHashCode();
-
-        public static bool operator ==(PhoneNumber left, PhoneNumber right)
-            => Equals(left, right);
-
-        public static bool operator !=(PhoneNumber left, PhoneNumber right)
-            => !Equals(left, right);
+        public override bool Equals(SeedWork.ValueObject? other)
+        {
+            if (other is null) return false;
+            return
+                other is PhoneNumber phoneNumber &&
+                Value == phoneNumber.Value;
+        }
     }
 }

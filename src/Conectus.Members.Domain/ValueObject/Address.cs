@@ -13,7 +13,6 @@ namespace Conectus.Members.Domain.ValueObject
         public string ZipCode { get; }
         public double? Latitude { get; }
         public double? Longitude { get; }
-        private Address() { } // EF Core
 
         public Address(
             string street,
