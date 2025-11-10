@@ -1,5 +1,7 @@
 ﻿using Conectus.Members.Domain.Enum;
+using Conectus.Members.Domain.Exceptions;
 using Conectus.Members.Domain.SeedWork;
+using Conectus.Members.Domain.Validation;
 using Conectus.Members.Domain.ValueObject;
 
 namespace Conectus.Members.Domain.Entity
@@ -27,6 +29,7 @@ namespace Conectus.Members.Domain.Entity
             PhoneNumber phoneNumber,
             IdentifierDocument document,
             Address address,
+            Guid? responsibleId = null,
             bool isActive = true)
         {
             FirstName = firstName;
@@ -37,19 +40,28 @@ namespace Conectus.Members.Domain.Entity
             Document = document;
             Address = address;
 
-            IsActive = isActive;
             CreatedAt = DateTime.Now;
+            ResponsibleId = IsMinor ? responsibleId : null;
+            IsActive = isActive;
 
             Validate();
         }
 
         private void Validate()
         {
-            Domain.Validation.DomainValidation.NotNullOrEmpty<Member>(FirstName, nameof(FirstName));
+            DomainValidation.NotNullOrEmpty<Member>(FirstName, nameof(FirstName));
+            DomainValidation.MinLength<Member>(FirstName, 3, nameof(FirstName));
+            DomainValidation.MaxLength<Member>(FirstName, 50, nameof(FirstName));
 
-            Domain.Validation.DomainValidation.NotNullOrEmpty<Member>(LastName, nameof(LastName));
+            DomainValidation.NotNullOrEmpty<Member>(LastName, nameof(LastName));
+            DomainValidation.MinLength<Member>(LastName, 3, nameof(LastName));
+            DomainValidation.MaxLength<Member>(LastName, 50, nameof(LastName));
 
-            Domain.Validation.DomainValidation.NotNull<Member>(DateOfBirth, nameof(DateOfBirth));
+            DomainValidation.NotNull<Member>(DateOfBirth, nameof(DateOfBirth));
+            DomainValidation.InvalidAtritibute<Member>(nameof(DateOfBirth), (DateOfBirth.Date > DateTime.Now.Date));
+
+            if (IsMinor && ResponsibleId is null)
+                throw new EntityValidationException("Member is a minor and needs a guardian.");
         }
     }
 }

@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="13.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Conectus.Members.Domain\Conectus.Members.Domain.csproj" />
+    <ProjectReference Include="..\Conectus.Members.Infra.CrossCutting.Commons\Conectus.Members.Infra.CrossCutting.Commons.csproj" />
+  </ItemGroup>
+
 </Project>

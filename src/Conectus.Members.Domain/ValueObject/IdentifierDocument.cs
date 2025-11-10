@@ -24,7 +24,7 @@ namespace Conectus.Members.Domain.ValueObject
             DomainValidation.NotNullOrEmpty<IdentifierDocument>(Document, nameof(Document));
 
             if (!IsValid)
-                DomainValidation.InvalidAtrtibute<IdentifierDocument>(nameof(Document));
+                DomainValidation.InvalidAtritibute<IdentifierDocument>(nameof(Document));
         }
 
         public override bool Equals(SeedWork.ValueObject? other)

@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Conectus.Members.Application\Conectus.Members.Application.csproj" />
     <ProjectReference Include="..\..\src\Conectus.Members.Domain\Conectus.Members.Domain.csproj" />
   </ItemGroup>
 

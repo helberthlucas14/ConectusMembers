@@ -23,7 +23,7 @@ namespace Conectus.Members.Domain.Validation
 
         public static void Between<T>(double? target, int min, int max, string fieldName) where T : class
             => ThrowIf<T>(target.HasValue && (target < min || target > max), $"{fieldName} must be between {min} and {max}.");
-        public static void InvalidAtrtibute<T>(string fieldName, bool target = true) where T : class
+        public static void InvalidAtritibute<T>(string fieldName, bool target = true) where T : class
             => ThrowIf<T>(target, $"{fieldName} is invalid.");
 
 

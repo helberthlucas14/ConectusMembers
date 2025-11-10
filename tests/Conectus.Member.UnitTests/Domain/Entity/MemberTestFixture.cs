@@ -8,16 +8,17 @@ namespace Conectus.Members.UnitTests.Domain.Entity
 {
     public class MemberTestFixture : BaseFixture
     {
-        public DomainEntity.Member GetValidMember()
+        public DomainEntity.Member GetValidMember(bool isMinor = false)
         {
             return new DomainEntity.Member(
-                  Faker.Person.FirstName,
-                  Faker.Person.LastName,
-                  Faker.Person.DateOfBirth,
+                  GetValidFirstName(),
+                  GetValidLastName(),
+                  isMinor ? Faker.Date.Past(17, DateTime.Now) : Faker.Date.Past(30, DateTime.Now.AddYears(-18)),
                  (Gender)Faker.Person.Gender,
                   GetPhoneNumber(),
                   GetIdentifierDocument(),
-                  GetAddress());
+                  GetAddress(),
+                  isMinor ? Guid.NewGuid() : null);
         }
 
         public IdentifierDocument GetIdentifierDocument(DocumentType type = DocumentType.CPF)
@@ -27,12 +28,30 @@ namespace Conectus.Members.UnitTests.Domain.Entity
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
-        public PhoneNumber GetPhoneNumber(string? phoneNumber = "")
-            => new PhoneNumber(
-                string.IsNullOrWhiteSpace(phoneNumber) ?
-                Faker.Phone.PhoneNumber() :
-                phoneNumber);
+        public PhoneNumber GetPhoneNumber()
+         => new PhoneNumber(Faker.Phone.PhoneNumber("(##)###-###-###"));
 
+        public string GetValidFirstName()
+        {
+            var validFirstName = "";
+            
+            while (validFirstName.Length < 3)
+                validFirstName = Faker.Person.FirstName;
+            if (validFirstName.Length > 50)
+                validFirstName = validFirstName[..50];
+
+            return validFirstName;
+        }
+        public string GetValidLastName()
+        {
+            var validLastName = "";
+
+            while (validLastName.Length < 3)
+                validLastName = Faker.Person.LastName;
+            if (validLastName.Length > 50)
+                validLastName = validLastName[..50];
+            return validLastName;
+        }
     }
 
 

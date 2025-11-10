@@ -15,7 +15,7 @@ namespace Conectus.Members.Domain.ValueObject
             var normalized = Normalize(value);
 
             if (!IsValid(normalized))
-                DomainValidation.InvalidAtrtibute<PhoneNumber>(nameof(PhoneNumber));
+                DomainValidation.InvalidAtritibute<PhoneNumber>(nameof(PhoneNumber));
 
             Value = normalized;
         }

@@ -2,7 +2,7 @@
 
 namespace Conectus.Members.Domain.ValueObject
 {
-    public class Address : SeedWork.ValueObject
+    public sealed class Address : SeedWork.ValueObject
     {
         public string Street { get; }
         public string Number { get; }
