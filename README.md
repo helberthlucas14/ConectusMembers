@@ -23,10 +23,10 @@ O projeto foi desenvolvido seguindo os princípios de **Clean Architecture**, **
 O **Connectus** adota **Clean Architecture** e **DDD**, organizando o código em camadas independentes:
 
 src/
-├── Connectus.Api → Camada de apresentação (Controllers, Swagger, Middlewares)
-├── Connectus.Application → Casos de uso (Services, DTOs, Validations, Mapeamentos)
-├── Connectus.Domain → Entidades e interfaces de domínio
-├── Connectus.Infrastructure → Persistência (EF Core, Repositórios, Configurações)
-└── tests/
-├── Connectus.UnitTests → Testes de unidade (TDD)
-└── Connectus.IntegrationTests → Testes de integração (API e banco)
+- ├── Connectus.Api → Camada de apresentação (Controllers, Swagger, Middlewares)
+- ├── Connectus.Application → Casos de uso (Services, DTOs, Validations, Mapeamentos)
+- ├── Connectus.Domain → Entidades e interfaces de domínio
+- ├── Connectus.Infrastructure → Persistência (EF Core, Repositórios, Configurações)
+- └── tests/
+- ├── Connectus.UnitTests → Testes de unidade (TDD)
+- └── Connectus.IntegrationTests → Testes de integração (API e banco)
