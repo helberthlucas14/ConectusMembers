@@ -11,7 +11,6 @@ namespace Conectus.Member.UnitTests.Domain.Entity
         public MemberTest(MemberTestFixture fixture)
             => _fixture = fixture;
 
-
         [Fact(DisplayName = nameof(Instantiate_Member_Successfully))]
         [Trait("Domain", "Member - Aggregates")]
         public void Instantiate_Member_Successfully()
@@ -44,9 +43,6 @@ namespace Conectus.Member.UnitTests.Domain.Entity
             (member.CreatedAt >= datetimeBefore).Should().BeTrue();
             (member.CreatedAt <= datetimeAfter).Should().BeTrue();
         }
-
-
-
 
         [Fact(DisplayName = nameof(Instantiate_Member_IsActive))]
         [Trait("Domain", "Member - Aggregates")]
@@ -81,6 +77,79 @@ namespace Conectus.Member.UnitTests.Domain.Entity
             member.CreatedAt.Should().NotBeSameDateAs(default(DateTime));
             (member.CreatedAt >= datetimeBefore).Should().BeTrue();
             (member.CreatedAt <= datetimeAfter).Should().BeTrue();
+        }
+
+        [Fact(DisplayName = nameof(Instantiate_Member_IsActive))]
+        [Trait("Domain", "Member - Aggregates")]
+        public void DesativeMember()
+        {
+            var validMember = _fixture.GetValidMember();
+            var datetimeBefore = DateTime.Now;
+            var isActive = true;
+
+            var member = new DomainEntity.Member(
+                validMember.FirstName,
+                validMember.LastName,
+                validMember.DateOfBirth,
+                validMember.Gender,
+                validMember.PhoneNumber,
+                validMember.Document,
+                validMember.Address,
+                isActive: isActive);
+
+            member.Desactive();
+
+            var datetimeAfter = DateTime.Now.AddSeconds(1);
+
+            member.Should().NotBeNull();
+            member.Id.Should().NotBeEmpty();
+            member.FirstName.Should().Be(validMember.FirstName);
+            member.LastName.Should().Be(validMember.LastName);
+            member.DateOfBirth.Should().Be(validMember.DateOfBirth);
+            member.Gender.Should().Be(validMember.Gender);
+            member.PhoneNumber.Should().Be(validMember.PhoneNumber);
+            member.Document.Should().Be(validMember.Document);
+            member.Address.Should().Be(validMember.Address);
+            member.IsActive.Should().BeFalse();
+            member.CreatedAt.Should().NotBeSameDateAs(default(DateTime));
+            (member.CreatedAt >= datetimeBefore).Should().BeTrue();
+            (member.CreatedAt <= datetimeAfter).Should().BeTrue();
+        }
+
+        [Fact(DisplayName = nameof(Instantiate_Member_IsActive))]
+        [Trait("Domain", "Member - Aggregates")]
+        public void UpdateMember()
+        {
+            var member = _fixture.GetValidMember();
+
+            var newFirstName = _fixture.GetValidFirstName();
+            var newLastName = _fixture.GetValidFirstName();
+            var newDateOfBirth = _fixture.GetValidDateOfBirth();
+            var newGender = _fixture.GetValidGender();
+            var newPhone = _fixture.GetValidPhoneNumber();
+            var newDocument = _fixture.GetIdentifierDocument();
+            var newAddress = _fixture.GetAddress();
+            var newIsActive = _fixture.GetRandomBoolean();
+
+            member.Update(newFirstName,
+                newLastName,
+                newDateOfBirth,
+                newGender,
+                newPhone,
+                newDocument,
+                newAddress,
+                newIsActive);
+
+            member.Should().NotBeNull();
+            member.Id.Should().NotBeEmpty();
+            member.FirstName.Should().Be(newFirstName);
+            member.LastName.Should().Be(newLastName);
+            member.DateOfBirth.Should().Be(newDateOfBirth);
+            member.Gender.Should().Be(newGender);
+            member.PhoneNumber.Should().Be(newPhone);
+            member.Document.Should().Be(newDocument);
+            member.Address.Should().Be(newAddress);
+            member.IsActive.Should().Be(newIsActive);
         }
 
 
@@ -191,6 +260,17 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                 .WithMessage("DateOfBirth is invalid.");
         }
 
+        [Fact(DisplayName = nameof(DesactiveMember))]
+        [Trait("Domain", "Member - Aggregates")]
+        public void DesactiveMember()
+        {
+            var validMember = _fixture.GetValidMember();
+            validMember.Desactive();
+
+            validMember.Should().NotBeNull();
+            validMember.IsActive.Should().BeFalse();
+        }
+
         #region FirstName Validations
         [Theory(DisplayName = nameof(InstantiateErrorWhenFirstNameIsLessThan3Characters))]
         [Trait("Domain", "Member - Aggregates")]
@@ -207,6 +287,28 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                            validMember.PhoneNumber,
                            validMember.Document,
                            validMember.Address);
+
+            action.Should()
+                .Throw<EntityValidationException>()
+                .WithMessage("FirstName should be at least 3 characters long");
+        }
+
+        [Theory(DisplayName = nameof(UpdateErrorWhenFirstNameIsLessThan3Characters))]
+        [Trait("Domain", "Member - Aggregates")]
+        [MemberData(nameof(GetFirstNamesWithLessThan3Characters), parameters: 10)]
+        public void UpdateErrorWhenFirstNameIsLessThan3Characters(string invalidName)
+        {
+            var validMember = _fixture.GetValidMember();
+
+            Action action = () => validMember.Update(
+                           invalidName,
+                           validMember.LastName,
+                           validMember.DateOfBirth,
+                           validMember.Gender,
+                           validMember.PhoneNumber,
+                           validMember.Document,
+                           validMember.Address,
+                           isActive: validMember.IsActive);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -245,6 +347,27 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                 .Throw<EntityValidationException>()
                 .WithMessage("FirstName should be less or equal 50 characters long");
         }
+        [Fact(DisplayName = nameof(UpdateErrorWhenFirstIsGreaterThan50Characters))]
+        [Trait("Domain", "Member - Aggregates")]
+        public void UpdateErrorWhenFirstIsGreaterThan50Characters()
+        {
+            var validMember = _fixture.GetValidMember();
+            var invalidName = String.Join(null, Enumerable.Range(51, 100).Select(_ => "a").ToArray());
+
+            Action action = () => validMember.Update(
+                           invalidName,
+                           validMember.LastName,
+                           validMember.DateOfBirth,
+                           validMember.Gender,
+                           validMember.PhoneNumber,
+                           validMember.Document,
+                           validMember.Address,
+                           isActive: validMember.IsActive);
+
+            action.Should()
+                .Throw<EntityValidationException>()
+                .WithMessage("FirstName should be less or equal 50 characters long");
+        }
         #endregion
 
         #region LastName Validations
@@ -263,6 +386,28 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                            validMember.PhoneNumber,
                            validMember.Document,
                            validMember.Address);
+
+            action.Should()
+                .Throw<EntityValidationException>()
+                .WithMessage("LastName should be at least 3 characters long");
+        }
+
+        [Theory(DisplayName = nameof(UpdateErrorWhenLastNameIsLessThan3Characters))]
+        [Trait("Domain", "Member - Aggregates")]
+        [MemberData(nameof(GetFirstNamesWithLessThan3Characters), parameters: 10)]
+        public void UpdateErrorWhenLastNameIsLessThan3Characters(string invalidLastName)
+        {
+            var validMember = _fixture.GetValidMember();
+
+            Action action = () => validMember.Update(
+                           validMember.FirstName,
+                           invalidLastName,
+                           validMember.DateOfBirth,
+                           validMember.Gender,
+                           validMember.PhoneNumber,
+                           validMember.Document,
+                           validMember.Address,
+                           isActive: validMember.IsActive);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -296,6 +441,28 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                            validMember.PhoneNumber,
                            validMember.Document,
                            validMember.Address);
+
+            action.Should()
+                .Throw<EntityValidationException>()
+                .WithMessage("LastName should be less or equal 50 characters long");
+        }
+
+        [Fact(DisplayName = nameof(UpdateErrorWhenLastNameIsGreaterThan50Characters))]
+        [Trait("Domain", "Member - Aggregates")]
+        public void UpdateErrorWhenLastNameIsGreaterThan50Characters()
+        {
+            var validMember = _fixture.GetValidMember();
+            var invalidLastName = String.Join(null, Enumerable.Range(51, 100).Select(_ => "a").ToArray());
+
+            Action action = () => validMember.Update(
+                           validMember.FirstName,
+                           invalidLastName,
+                           validMember.DateOfBirth,
+                           validMember.Gender,
+                           validMember.PhoneNumber,
+                           validMember.Document,
+                           validMember.Address, 
+                           isActive: validMember.IsActive);
 
             action.Should()
                 .Throw<EntityValidationException>()

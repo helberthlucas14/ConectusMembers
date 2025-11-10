@@ -2,7 +2,7 @@
 
 namespace Conectus.Members.Domain.Exceptions
 {
-    public class EntityValidationException : Exception
+    public class EntityValidationException : DomainValidationException
     {
         public IReadOnlyCollection<ValidationError>? Errors { get; }
         public EntityValidationException(

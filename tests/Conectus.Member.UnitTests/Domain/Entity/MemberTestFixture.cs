@@ -2,6 +2,7 @@
 using Conectus.Members.Domain.Enum;
 using Conectus.Members.Domain.ValueObject;
 using Conectus.Members.UnitTests.Common;
+using System.Text.RegularExpressions;
 using DomainEntity = Conectus.Members.Domain.Entity;
 
 namespace Conectus.Members.UnitTests.Domain.Entity
@@ -13,9 +14,9 @@ namespace Conectus.Members.UnitTests.Domain.Entity
             return new DomainEntity.Member(
                   GetValidFirstName(),
                   GetValidLastName(),
-                  isMinor ? Faker.Date.Past(17, DateTime.Now) : Faker.Date.Past(30, DateTime.Now.AddYears(-18)),
-                 (Gender)Faker.Person.Gender,
-                  GetPhoneNumber(),
+                  GetValidDateOfBirth(isMinor),
+                  GetValidGender(),
+                  GetValidPhoneNumber(),
                   GetIdentifierDocument(),
                   GetAddress(),
                   isMinor ? Guid.NewGuid() : null);
@@ -28,13 +29,23 @@ namespace Conectus.Members.UnitTests.Domain.Entity
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
-        public PhoneNumber GetPhoneNumber()
-         => new PhoneNumber(Faker.Phone.PhoneNumber("(##)###-###-###"));
+        public PhoneNumber GetValidPhoneNumber()
+        {
+            string pattern = @"^\(\d{2}\)\d{3}-\d{3}-\d{3}$";
+            var regex = new Regex(pattern);
+
+            var phone = Faker.Phone.PhoneNumber("(##)###-###-###");
+
+            while (!regex.IsMatch(phone))
+                phone = Faker.Phone.PhoneNumber("(##)###-###-###");
+
+            return new PhoneNumber(phone);
+        }
 
         public string GetValidFirstName()
         {
             var validFirstName = "";
-            
+
             while (validFirstName.Length < 3)
                 validFirstName = Faker.Person.FirstName;
             if (validFirstName.Length > 50)
@@ -52,6 +63,15 @@ namespace Conectus.Members.UnitTests.Domain.Entity
                 validLastName = validLastName[..50];
             return validLastName;
         }
+
+        public DateTime GetValidDateOfBirth(bool isMinor = false)
+        {
+            return isMinor ? Faker.Date.Past(17, DateTime.Now) :
+                Faker.Date.Past(30, DateTime.Now.AddYears(-18));
+        }
+
+        public Gender GetValidGender() =>
+            GetRandomBoolean() ? Gender.Male : Gender.Male;
     }
 
 

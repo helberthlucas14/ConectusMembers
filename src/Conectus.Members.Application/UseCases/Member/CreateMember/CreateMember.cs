@@ -18,7 +18,7 @@ namespace Conectus.Members.Application.UseCases.Member.CreateMember
                 AddressDto.ToDomain(input.Address),
                 input.ResponsibleId);
 
-            return await Task.FromResult(MemberModelOutput.FromDomain(member));
+            return await Task.FromResult(MemberModelOutput.FromMember(member));
         }
         private PhoneNumber PhoneNumberToDomain(string phoneNumber) => new PhoneNumber(phoneNumber);
     }

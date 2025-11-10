@@ -1,18 +1,14 @@
-﻿using Bogus.Extensions.Brazil;
-using Conectus.Members.Application.UseCases.Member.Common;
+﻿using Conectus.Members.Application.UseCases.Member.Common;
 using Conectus.Members.Application.UseCases.Member.CreateMember;
-using Conectus.Members.Domain.Enum;
-using Conectus.Members.Domain.ValueObject;
-using Conectus.Members.UnitTests.Common;
-using UseCase = Conectus.Members.Application.UseCases.Member.CreateMember;
+using Conectus.Members.UnitTests.Application.Member.Common;
 
 namespace Conectus.Members.UnitTests.Application.Member.CreateMember
 {
-    public class CreateMemberTestFixture : BaseFixture
+    public class CreateMemberTestFixture : MemberUseCaseBaseFixture
     {
-        public UseCase.CreateMemberInput GetExampleInput(bool isMinor = false, Guid? resposibleId = null)
+        public CreateMemberInput GetExampleInput(bool isMinor = false, Guid? resposibleId = null)
         {
-            return new UseCase.CreateMemberInput(
+            return new CreateMemberInput(
                  IdentifierDocumentDto.FromDomain(GetValidDocument()),
                  GetValidFirstName(),
                  GetValidLastName(),
@@ -23,22 +19,6 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
                  isMinor ? resposibleId : null
                  );
         }
-        public IdentifierDocument GetValidDocument() => new IdentifierDocument(
-                        DocumentType.CPF,
-                        Faker.Person.Cpf()
-         );
-
-
-        public string GetValidFirstName() => Faker.Name.FirstName();
-
-
-        public string GetValidLastName() => Faker.Name.LastName();
-        public DateTime GetValidAdultDateOfBirth() =>
-            Faker.Date.Past(30, DateTime.Now.AddYears(-18));
-
-        public DateTime GetValidMinorDateOfBirth() =>
-            Faker.Date.Past(17, DateTime.Now);
-
         public CreateMemberInput GetInvalidInputShortFirstName()
         {
             var input = GetExampleInput();
@@ -83,12 +63,6 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
             input.LastName = null!;
             return input;
         }
-        public PhoneNumber GetValidPhoneNumber() =>
-           new PhoneNumber(Faker.Phone.PhoneNumber("(##)###-###-###"));
-
-        public Address GetValidAddress() => GetAddress();
-        public Gender GetValidGender() => GetRandomBoolean() ? Gender.Male : Gender.Female;
-
 
     }
 

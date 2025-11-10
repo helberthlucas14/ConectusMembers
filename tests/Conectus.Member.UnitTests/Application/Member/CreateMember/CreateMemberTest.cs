@@ -127,5 +127,7 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
                 .ThrowAsync<EntityValidationException>()
                 .WithMessage(exceptionMessage);
         }
+
+
     }
 }

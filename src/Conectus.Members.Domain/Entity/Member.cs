@@ -46,7 +46,43 @@ namespace Conectus.Members.Domain.Entity
 
             Validate();
         }
+        public void Update
+            (
+             string firstName,
+             string lastName,
+             DateTime dateOfBirth,
+             Gender gender,
+             PhoneNumber phoneNumber,
+             IdentifierDocument document,
+             Address address,
+             bool isActive,
+             Guid? responsibleId = null
+            )
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            DateOfBirth = dateOfBirth;
+            Gender = gender;
+            PhoneNumber = phoneNumber;
+            Document = document;
+            Address = address;
 
+            ResponsibleId = IsMinor ? responsibleId : null;
+            IsActive = isActive;
+            Validate();
+        }
+
+        public void Active()
+        {
+            IsActive = true;
+            Validate();
+        }
+
+        public void Desactive()
+        {
+            IsActive = false;
+            Validate();
+        }
         private void Validate()
         {
             DomainValidation.NotNullOrEmpty<Member>(FirstName, nameof(FirstName));
@@ -63,5 +99,7 @@ namespace Conectus.Members.Domain.Entity
             if (IsMinor && ResponsibleId is null)
                 throw new EntityValidationException("Member is a minor and needs a guardian.");
         }
+
+
     }
 }

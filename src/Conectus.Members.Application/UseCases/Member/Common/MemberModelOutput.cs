@@ -18,7 +18,7 @@ namespace Conectus.Members.Application.UseCases.Member.Common
         public DateTime CreatedAt { get; set; }
         public bool isMinor { get; set; }
 
-        public static MemberModelOutput FromDomain(DomainEntity.Member member)
+        public static MemberModelOutput FromMember(DomainEntity.Member member)
         {
             return new MemberModelOutput
             {

@@ -721,7 +721,7 @@ namespace Conectus.Members.UnitTests.Domain.ValueObject
             for (int i = 0; i < numberOfTests; i++)
             {
                 var isOdd = i % 2 == 1;
-                double longitude = fixture.Faker.Random.Double(-179, -200);
+                double longitude = fixture.Faker.Random.Double(-181, -200);
                 yield return new object[] { longitude };
             }
         }

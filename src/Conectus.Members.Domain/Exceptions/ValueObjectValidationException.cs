@@ -2,7 +2,7 @@
 
 namespace Conectus.Members.Domain.Exceptions
 {
-    public class ValueObjectValidationException : Exception
+    public class ValueObjectValidationException : DomainValidationException
     {
         public IReadOnlyCollection<ValidationError>? Errors { get; }
         public ValueObjectValidationException(
