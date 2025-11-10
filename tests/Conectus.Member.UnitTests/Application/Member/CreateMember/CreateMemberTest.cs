@@ -1,4 +1,5 @@
-﻿using Conectus.Members.Domain.Exceptions;
+﻿using Conectus.Members.Application.UseCases.Member.CreateMember;
+using Conectus.Members.Domain.Exceptions;
 using FluentAssertions;
 using UseCase = Conectus.Members.Application.UseCases.Member.CreateMember;
 
@@ -104,6 +105,27 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
             await action.Should()
                 .ThrowAsync<EntityValidationException>()
                 .WithMessage("Member is a minor and needs a guardian.");
+        }
+
+        [Theory(DisplayName = nameof(ThrowWhenCantInstantiateMember))]
+        [Trait("Application", "CreateCategory - Use Cases")]
+        [MemberData(
+            nameof(CreateMemberTestDataGenerator.GetInvalidCreateMemberInputs),
+            parameters: 50,
+            MemberType = typeof(CreateMemberTestDataGenerator)
+        )]
+        public async void ThrowWhenCantInstantiateMember(
+         CreateMemberInput input,
+         string exceptionMessage
+            )
+        {
+            var useCase = new UseCase.CreateMember();
+
+            Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
+
+            await task.Should()
+                .ThrowAsync<EntityValidationException>()
+                .WithMessage(exceptionMessage);
         }
     }
 }
