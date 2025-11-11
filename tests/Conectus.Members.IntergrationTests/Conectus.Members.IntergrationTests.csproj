@@ -28,7 +28,6 @@
 
 	<ItemGroup>
 		<Folder Include="Application\UseCases\Member\" />
-		<Folder Include="Infra.Data.EF\Repositories\" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,5 +1,4 @@
-﻿using Conectus.Members.Domain.Enum;
-using Conectus.Members.Domain.ValueObject;
+﻿using Conectus.Members.Domain.ValueObject;
 using FluentAssertions;
 
 namespace Conectus.Members.UnitTests.Domain.ValueObject
@@ -32,7 +31,6 @@ namespace Conectus.Members.UnitTests.Domain.ValueObject
 
             action.Should().Throw()
                 .WithMessage("PhoneNumber is invalid.");
-
         }
 
         public static IEnumerable<object[]> GetInvalidNumbers(int numberOfTests)
@@ -43,7 +41,7 @@ namespace Conectus.Members.UnitTests.Domain.ValueObject
             {
                 var isOdd = i % 2 == 1;
                 yield return new object[] {
-                fixture.GetValidPhoneNumber().Value[..(isOdd ? 11 : 13)]
+                fixture.GetValidPhoneNumber().Value[..(isOdd ? 7 : 12)]
             };
             }
         }

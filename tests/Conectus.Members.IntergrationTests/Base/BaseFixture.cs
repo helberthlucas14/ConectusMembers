@@ -11,14 +11,14 @@ namespace Conectus.Members.IntergrationTests.Base
 
         protected Faker Faker { get; set; }
 
-        public ConectusMemberDbContext CreateDbContext(bool preserveData = false)
+        public ConectusMemberDbContext CreateDbContext(bool preserveData = false, string? dbName = "")
         {
             var context = new ConectusMemberDbContext(
                 new DbContextOptionsBuilder<ConectusMemberDbContext>()
-                .UseInMemoryDatabase("integration-tests-db")
+                .UseInMemoryDatabase(string.IsNullOrWhiteSpace(dbName) ? "integration-tests-db" : dbName)
                 .Options
             );
-            if (preserveData == false)
+            if (!preserveData)
                 context.Database.EnsureDeleted();
             return context;
         }

@@ -1,4 +1,6 @@
-﻿using Bogus.Extensions.Brazil;
+﻿using Bogus;
+using Bogus.DataSets;
+using Bogus.Extensions.Brazil;
 using Conectus.Members.Application.UseCases.Member.Common;
 using Conectus.Members.Application.UseCases.Member.CreateMember;
 using Conectus.Members.Domain.Enum;
@@ -26,24 +28,32 @@ namespace Conectus.Members.UnitTests.Application.Member.Common
             Faker.Date.Past(17, DateTime.Now);
         public PhoneNumber GetValidPhoneNumber()
         {
-            string pattern = @"^\(\d{2}\)\d{3}-\d{3}-\d{3}$";
-            var regex = new Regex(pattern);
+            int[] validDDDs = {11, 12, 13, 14, 15, 16, 17, 18, 19,
+                       21, 22, 24, 27, 28, 31, 32, 33, 34, 35,
+                       37, 38, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+                       51, 53, 54, 55, 61, 62, 63, 64, 65, 66, 67,
+                       68, 69, 71, 73, 74, 75, 77, 79, 81, 82, 83,
+                       84, 85, 86, 87, 88, 89, 91, 92, 93, 94, 95,
+                       96, 97, 98, 99};
 
-            var phone = Faker.Phone.PhoneNumber("(##)###-###-###");
+            int ddd = Faker.PickRandom(validDDDs); 
 
-            while (!regex.IsMatch(phone))
-                phone = Faker.Phone.PhoneNumber("(##)###-###-###");
+            bool celular = Faker.Random.Bool();
+
+            string number;
+            if (celular)
+                number = Faker.Random.Number(900000000, 999999999).ToString(); 
+            else
+                number = Faker.Random.Number(20000000, 99999999).ToString();
+
+            string phone = $"+55{ddd}{number}";
 
             return new PhoneNumber(phone);
         }
 
-        public Address GetValidAddress() =>
-            GetAddress();
         public Gender GetValidGender() =>
             GetRandomBoolean() ? Gender.Male :
             Gender.Female;
-
-
 
         public DomainEntity.Member GetValidMemberExample(bool isMinor = false)
         {

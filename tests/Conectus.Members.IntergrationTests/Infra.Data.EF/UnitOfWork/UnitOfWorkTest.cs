@@ -1,4 +1,5 @@
-﻿using Conectus.Members.Application;
+﻿using Bogus.DataSets;
+using Conectus.Members.Application;
 using Conectus.Members.Domain.SeedWork;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,8 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.UnitOfWork
         [Trait("Integration/Infra.Data", "UnitOfWork - Persistence")]
         public async Task Commit()
         {
-            var dbContext = _fixture.CreateDbContext();
+            var dbName = "test";
+            var dbContext = _fixture.CreateDbContext(dbName: dbName);
             var exampleMembersList = _fixture.GetExampleMembersList();
             var memberWithEvent = exampleMembersList.First();
             var @event = new DomainEventFake();
@@ -39,11 +41,13 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.UnitOfWork
 
             await unitOfWork.Commit(CancellationToken.None);
 
-            var assertDbContext = _fixture.CreateDbContext(true);
+            var assertDbContext = _fixture.CreateDbContext(true, dbName: dbName);
+
             var savedMembers = assertDbContext.Members
                 .AsNoTracking().ToList();
             savedMembers.Should()
                 .HaveCount(exampleMembersList.Count);
+
             eventHandlerMock.Verify(x =>
                 x.HandleAsync(@event, It.IsAny<CancellationToken>()),
                 Times.Once);

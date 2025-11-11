@@ -15,7 +15,7 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
                  isMinor ? GetValidMinorDateOfBirth() : GetValidAdultDateOfBirth(),
                  GetValidGender(),
                  GetValidPhoneNumber().Value,
-                 AddressDto.FromDomain(GetValidAddress()),
+                 AddressDto.FromDomain(GetAddress()),
                  isMinor ? resposibleId : null
                  );
         }

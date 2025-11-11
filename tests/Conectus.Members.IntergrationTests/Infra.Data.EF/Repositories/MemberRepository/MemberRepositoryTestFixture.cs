@@ -1,17 +1,22 @@
 ﻿using Bogus.Extensions.Brazil;
+using Conectus.Members.Domain.Entity;
 using Conectus.Members.Domain.Enum;
 using Conectus.Members.Domain.ValueObject;
-using Conectus.Members.UnitTests.Common;
+using Conectus.Members.IntergrationTests.Base;
 using System.Text.RegularExpressions;
-using DomainEntity = Conectus.Members.Domain.Entity;
 
-namespace Conectus.Members.UnitTests.Domain.Entity
+namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
 {
-    public class MemberTestFixture : BaseFixture
+    [CollectionDefinition(nameof(MemberRepositoryTestFixture))]
+    public class MemberRepositoryTestFixtureCollection
+    : ICollectionFixture<MemberRepositoryTestFixture>
+    { }
+    public class MemberRepositoryTestFixture
+        : BaseFixture
     {
-        public DomainEntity.Member GetValidMember(bool isMinor = false)
+        public Member GetExampleMember(bool isMinor = false)
         {
-            return new DomainEntity.Member(
+            return new Member(
                   GetValidFirstName(),
                   GetValidLastName(),
                   GetValidDateOfBirth(isMinor),
@@ -20,6 +25,21 @@ namespace Conectus.Members.UnitTests.Domain.Entity
                   GetIdentifierDocument(),
                   GetAddress(),
                   isMinor ? Guid.NewGuid() : null);
+        }
+
+        public Address GetAddress()
+        {
+            var number = Faker.Random.Long(1, 9_999_999_999).ToString();
+            return new Address(
+                Faker.Address.StreetName(),
+                number,
+                Faker.Address.SecondaryAddress(),
+                Faker.Address.County(),
+                Faker.Address.City(),
+                Faker.Address.StateAbbr(),
+                Faker.Address.ZipCode(),
+                Faker.Random.Number(-90, 90),
+                Faker.Random.Number(-180, 180));
         }
 
         public IdentifierDocument GetIdentifierDocument(DocumentType type = DocumentType.CPF)
@@ -84,12 +104,10 @@ namespace Conectus.Members.UnitTests.Domain.Entity
 
         public Gender GetValidGender() =>
             GetRandomBoolean() ? Gender.Male : Gender.Male;
-    }
 
+        public bool GetRandomBoolean() => new Random().NextDouble() < 0.5;
 
-    [CollectionDefinition(nameof(MemberTestFixture))]
-    public class MemberTestFixtureCollection
-        : ICollectionFixture<MemberTestFixture>
-    {
+        public List<Member> GetExampleMembersList(int length = 10)
+         => Enumerable.Range(1, length).Select(_ => GetExampleMember()).ToList();
     }
 }

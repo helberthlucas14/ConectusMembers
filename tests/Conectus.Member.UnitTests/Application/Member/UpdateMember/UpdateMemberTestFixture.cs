@@ -18,7 +18,7 @@ namespace Conectus.Members.UnitTests.Application.Member.UpdateMember
                 isMinor ? GetValidMinorDateOfBirth() : GetValidAdultDateOfBirth(),
                 GetValidGender(),
                 GetValidPhoneNumber().Value,
-                AddressDto.FromDomain(GetValidAddress()),
+                AddressDto.FromDomain(GetAddress()),
                 resposibleId,
                 GetRandomBoolean()
                 );
