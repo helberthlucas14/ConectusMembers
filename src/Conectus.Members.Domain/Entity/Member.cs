@@ -20,6 +20,9 @@ namespace Conectus.Members.Domain.Entity
         public bool IsMinor => DateOfBirth.AddYears(18) > DateTime.UtcNow;
         public bool IsActive { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public Member()
+        {
+        }
 
         public Member(
             string firstName,
@@ -30,7 +33,7 @@ namespace Conectus.Members.Domain.Entity
             IdentifierDocument document,
             Address address,
             Guid? responsibleId = null,
-            bool isActive = true)
+            bool isActive = true) : base()
         {
             FirstName = firstName;
             LastName = lastName;

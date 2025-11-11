@@ -19,6 +19,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conectus.Members.Infra.Cros
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conectus.Members.UnitTests", "tests\Conectus.Member.UnitTests\Conectus.Members.UnitTests.csproj", "{D501D8BF-A240-4E83-B829-052E3E3410F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conectus.Members.IntergrationTests", "tests\Conectus.Members.IntergrationTests\Conectus.Members.IntergrationTests.csproj", "{A70DFAF4-A2B6-4249-807A-846EC97C6D1D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "env", "env", "{1DF7793A-1288-4586-8E6F-2B89F369EACC}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +56,10 @@ Global
 		{D501D8BF-A240-4E83-B829-052E3E3410F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D501D8BF-A240-4E83-B829-052E3E3410F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D501D8BF-A240-4E83-B829-052E3E3410F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A70DFAF4-A2B6-4249-807A-846EC97C6D1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A70DFAF4-A2B6-4249-807A-846EC97C6D1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A70DFAF4-A2B6-4249-807A-846EC97C6D1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A70DFAF4-A2B6-4249-807A-846EC97C6D1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +71,7 @@ Global
 		{59E4AE1C-ACDD-4612-8A70-92CAA3CF50C0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8CC6ED3F-58D1-40C9-8B67-8DE54A621360} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{D501D8BF-A240-4E83-B829-052E3E3410F2} = {C408B640-C234-444B-B931-988898F79F96}
+		{A70DFAF4-A2B6-4249-807A-846EC97C6D1D} = {C408B640-C234-444B-B931-988898F79F96}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DFD80F2C-4DA3-47AA-B6FE-8637B53DDC3D}
