@@ -51,27 +51,25 @@ namespace Conectus.Members.Domain.Entity
         }
         public void Update
             (
-             string firstName,
-             string lastName,
-             DateTime dateOfBirth,
-             Gender gender,
-             PhoneNumber phoneNumber,
-             IdentifierDocument document,
-             Address address,
-             bool isActive,
+             string? firstName = null,
+             string? lastName = null,
+             DateTime? dateOfBirth = null,
+             Gender? gender = null,
+             PhoneNumber? phoneNumber = null,
+             IdentifierDocument? document = null,
+             Address? address = null,
              Guid? responsibleId = null
             )
         {
-            FirstName = firstName;
-            LastName = lastName;
-            DateOfBirth = dateOfBirth;
-            Gender = gender;
-            PhoneNumber = phoneNumber;
-            Document = document;
-            Address = address;
+            FirstName = firstName ?? FirstName;
+            LastName = lastName ?? LastName;
+            DateOfBirth = dateOfBirth ?? DateOfBirth;
+            Gender = gender ?? Gender;
+            PhoneNumber = phoneNumber ?? PhoneNumber;
+            Document = document ?? Document;
+            Address = address ?? Address;
 
             ResponsibleId = IsMinor ? responsibleId : null;
-            IsActive = isActive;
             Validate();
         }
 
@@ -101,8 +99,8 @@ namespace Conectus.Members.Domain.Entity
 
             if (IsMinor && ResponsibleId is null)
                 throw new EntityValidationException("Member is a minor and needs a guardian.");
+
+            DomainValidation.InvalidAtritibute<Member>(nameof(ResponsibleId), (IsMinor && ResponsibleId == Id));
         }
-
-
     }
 }

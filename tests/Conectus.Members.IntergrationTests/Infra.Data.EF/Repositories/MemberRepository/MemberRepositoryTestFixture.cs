@@ -14,7 +14,7 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
     public class MemberRepositoryTestFixture
         : BaseFixture
     {
-        public Member GetExampleMember(bool isMinor = false)
+        public Member GetExampleMember(bool isMinor = false, Guid? responsibleId = null)
         {
             return new Member(
                   GetValidFirstName(),
@@ -24,7 +24,7 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
                   GetValidPhoneNumber(),
                   GetIdentifierDocument(),
                   GetAddress(),
-                  isMinor ? Guid.NewGuid() : null);
+                  isMinor ? responsibleId ?? Guid.NewGuid() : null);
         }
 
         public Address GetAddress()
@@ -109,5 +109,18 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
 
         public List<Member> GetExampleMembersList(int length = 10)
          => Enumerable.Range(1, length).Select(_ => GetExampleMember()).ToList();
+
+        public List<Member> GetExampleMembersListWithMinors(List<Guid> adultIds, int length = 10)
+        {
+            var members = new List<Member>();
+            for (int i = 0; i < length; i++)
+            {
+                var isOdd = i % 2 != 0;
+                var member = isOdd ? GetExampleMember(true, adultIds[new Random().Next(0, adultIds.Count)]) : GetExampleMember();
+                members.Add(member);
+            }
+
+            return members;
+        }
     }
 }

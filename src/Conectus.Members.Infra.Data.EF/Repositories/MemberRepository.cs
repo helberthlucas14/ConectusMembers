@@ -5,7 +5,7 @@ using Conectus.Members.Domain.Repository.SearchableRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace Conectus.Members.Infra.Data.EF.Repositories;
-public class MemberRepository 
+public class MemberRepository
     : IMemberRepository
 {
     private readonly ConectusMemberDbContext _context;
@@ -21,7 +21,9 @@ public class MemberRepository
 
     public async Task<Member> Get(Guid id, CancellationToken cancellationToken)
     {
-        var Member = await _members.AsNoTracking().FirstOrDefaultAsync(
+        var Member = await _members.AsNoTracking()
+            .Include(m => m.Responsible)
+            .FirstOrDefaultAsync(
             x => x.Id == id,
             cancellationToken
         );
@@ -32,10 +34,10 @@ public class MemberRepository
     public async Task<SearchOutput<Member>> Search(SearchInput input, CancellationToken cancellationToken)
     {
         var toSkip = (input.Page - 1) * input.PerPage;
-        var query = _members.AsNoTracking();
+        var query = _members.Include(m => m.Responsible).AsNoTracking();
         query = AddOrderToQuery(query, input.OrderBy, input.Order);
         if (!String.IsNullOrWhiteSpace(input.Search))
-            query = query.Where(x => x.FirstName.Contains(input.Search));
+            query = query.Include(m => m.Responsible).Where(x => x.FirstName.Contains(input.Search));
         var items = await query
             .Skip(toSkip)
             .Take(input.PerPage)

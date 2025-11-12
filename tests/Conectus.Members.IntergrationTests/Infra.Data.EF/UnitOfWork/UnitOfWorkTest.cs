@@ -1,5 +1,4 @@
-﻿using Bogus.DataSets;
-using Conectus.Members.Application;
+﻿using Conectus.Members.Application;
 using Conectus.Members.Domain.SeedWork;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

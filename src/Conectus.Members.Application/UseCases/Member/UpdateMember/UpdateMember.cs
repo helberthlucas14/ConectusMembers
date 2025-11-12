@@ -29,7 +29,6 @@ namespace Conectus.Members.Application.UseCases.Member.UpdateMember
                   PhoneNumberToDomain(input.PhoneNumber),
                   IdentifierDocumentDto.ToDomain(input.Document),
                   AddressDto.ToDomain(input.Address),
-                  input.IsActive,
                   input.ResponsibleId
                 );
 
