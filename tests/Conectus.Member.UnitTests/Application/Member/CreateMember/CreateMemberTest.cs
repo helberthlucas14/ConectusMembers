@@ -1,6 +1,9 @@
-﻿using Conectus.Members.Application.UseCases.Member.CreateMember;
+﻿using Conectus.Members.Application.Interfaces;
+using Conectus.Members.Application.UseCases.Member.CreateMember;
 using Conectus.Members.Domain.Exceptions;
+using Conectus.Members.Domain.Repository;
 using FluentAssertions;
+using Moq;
 using UseCase = Conectus.Members.Application.UseCases.Member.CreateMember;
 
 namespace Conectus.Members.UnitTests.Application.Member.CreateMember
@@ -18,7 +21,11 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
         {
             var input = _fixture.GetExampleInput();
 
-            var useCase = new UseCase.CreateMember();
+            var repositoryMock = new Mock<IMemberRepository>();
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+            var useCase = new UseCase.CreateMember(
+                repositoryMock.Object,
+                unitOfWorkMock.Object);
 
             var datetimeBefore = DateTime.Now;
 
@@ -56,7 +63,11 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
             var responsibleId = Guid.NewGuid();
             var input = _fixture.GetExampleInput(isMinorInput, responsibleId);
 
-            var useCase = new UseCase.CreateMember();
+            var repositoryMock = new Mock<IMemberRepository>();
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+            var useCase = new UseCase.CreateMember(
+                repositoryMock.Object,
+                unitOfWorkMock.Object);
 
             var datetimeBefore = DateTime.Now;
 
@@ -95,7 +106,11 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
             var isMinorInput = true;
             var input = _fixture.GetExampleInput(isMinorInput);
 
-            var useCase = new UseCase.CreateMember();
+            var repositoryMock = new Mock<IMemberRepository>();
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+            var useCase = new UseCase.CreateMember(
+                repositoryMock.Object,
+                unitOfWorkMock.Object);
 
             var action = async () => await useCase.Handle(
                    input,
@@ -119,7 +134,11 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
          string exceptionMessage
             )
         {
-            var useCase = new UseCase.CreateMember();
+            var repositoryMock = new Mock<IMemberRepository>();
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+            var useCase = new UseCase.CreateMember(
+                repositoryMock.Object,
+                unitOfWorkMock.Object);
 
             Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
 

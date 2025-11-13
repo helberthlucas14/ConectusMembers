@@ -1,7 +1,10 @@
-﻿using Conectus.Members.Application.UseCases.Member.Common;
+﻿using Conectus.Members.Application.Interfaces;
+using Conectus.Members.Application.UseCases.Member.Common;
 using Conectus.Members.Application.UseCases.Member.UpdateMember;
 using Conectus.Members.Domain.Exceptions;
+using Conectus.Members.Domain.Repository;
 using FluentAssertions;
+using Moq;
 using DomainEntity = Conectus.Members.Domain.Entity;
 using UseCase = Conectus.Members.Application.UseCases.Member.UpdateMember;
 
@@ -26,7 +29,12 @@ namespace Conectus.Members.UnitTests.Application.Member.UpdateMember
             UpdateMemberInput input
         )
         {
-            var useCase = new UseCase.UpdateMember();
+            var repositoryMock = new Mock<IMemberRepository>();
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+            var useCase = new UseCase.UpdateMember(
+                repositoryMock.Object,
+                unitOfWorkMock.Object
+                );
 
             input.Id = exampleMember.Id;
 
@@ -63,8 +71,13 @@ namespace Conectus.Members.UnitTests.Application.Member.UpdateMember
         {
             var exampleMember = _fixture.GetValidMemberExample();
             input.Id = exampleMember.Id;
-            
-            var useCase = new UseCase.UpdateMember();
+
+            var repositoryMock = new Mock<IMemberRepository>();
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+            var useCase = new UseCase.UpdateMember(
+                repositoryMock.Object,
+                unitOfWorkMock.Object
+                );
 
             var task = async ()
                 => await useCase.Handle(input, CancellationToken.None);
