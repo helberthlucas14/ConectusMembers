@@ -16,7 +16,7 @@ namespace Conectus.Members.Application.UseCases.Member.Common
         public required AddressDto Address { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
-        public bool isMinor { get; set; }
+        public bool IsMinor { get; set; }
 
         public static MemberModelOutput FromMember(DomainEntity.Member member)
         {
@@ -33,7 +33,7 @@ namespace Conectus.Members.Application.UseCases.Member.Common
                 ResponsibleId = member.ResponsibleId,
                 IsActive = member.IsActive,
                 CreatedAt = member.CreatedAt,
-                isMinor = member.IsMinor
+                IsMinor = member.IsMinor
             };
         }
     }

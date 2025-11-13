@@ -91,7 +91,7 @@ namespace Conectus.Members.UnitTests.Application.Member.CreateMember
             output.Address.Should().NotBeNull();
             output.Address.Should().NotBeNull();
             output.IsActive.Should().BeTrue();
-            output.isMinor.Should().BeTrue();
+            output.IsMinor.Should().BeTrue();
             output.ResponsibleId.Should().NotBeEmpty();
             output.ResponsibleId.Should().Be(responsibleId);
 

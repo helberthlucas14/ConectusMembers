@@ -1,12 +1,11 @@
 ﻿using Bogus;
-using Bogus.DataSets;
 using Bogus.Extensions.Brazil;
-using Conectus.Members.Application.UseCases.Member.Common;
-using Conectus.Members.Application.UseCases.Member.CreateMember;
+using Conectus.Members.Application.Interfaces;
 using Conectus.Members.Domain.Enum;
+using Conectus.Members.Domain.Repository;
 using Conectus.Members.Domain.ValueObject;
 using Conectus.Members.UnitTests.Common;
-using System.Text.RegularExpressions;
+using Moq;
 using DomainEntity = Conectus.Members.Domain.Entity;
 
 namespace Conectus.Members.UnitTests.Application.Member.Common
@@ -14,6 +13,11 @@ namespace Conectus.Members.UnitTests.Application.Member.Common
     public class MemberUseCaseBaseFixture
         : BaseFixture
     {
+        public Mock<IMemberRepository> GetRepositoryMock()
+             => new();
+
+        public Mock<IUnitOfWork> GetUnitOfWorkMock()
+            => new();
         public IdentifierDocument GetValidDocument() => new IdentifierDocument(
                 DocumentType.CPF,
                 Faker.Person.Cpf());

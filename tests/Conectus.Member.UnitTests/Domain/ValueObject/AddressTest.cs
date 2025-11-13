@@ -133,8 +133,6 @@ namespace Conectus.Members.UnitTests.Domain.ValueObject
         }
 
 
-
-
         [Fact(DisplayName = nameof(InstantiateErrorWhenStreetIsGreaterThan100Characters))]
         [Trait("Domain", "Address - ValueObject")]
         public void InstantiateErrorWhenStreetIsGreaterThan100Characters()
