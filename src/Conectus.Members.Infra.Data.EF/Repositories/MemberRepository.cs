@@ -3,6 +3,7 @@ using Conectus.Members.Domain.Entity;
 using Conectus.Members.Domain.Repository;
 using Conectus.Members.Domain.Repository.SearchableRepository;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Conectus.Members.Infra.Data.EF.Repositories;
 public class MemberRepository
@@ -35,9 +36,9 @@ public class MemberRepository
     {
         var toSkip = (input.Page - 1) * input.PerPage;
         var query = _members.Include(m => m.Responsible).AsNoTracking();
-        query = AddOrderToQuery(query, input.OrderBy, input.Order);
-        if (!String.IsNullOrWhiteSpace(input.Search))
-            query = query.Include(m => m.Responsible).Where(x => x.FirstName.Contains(input.Search));
+        
+        query = AddToQuery(query, input);
+        
         var items = await query
             .Skip(toSkip)
             .Take(input.PerPage)
@@ -49,6 +50,34 @@ public class MemberRepository
             count,
             items.AsReadOnly()
         );
+    }
+
+    private IQueryable<Member> AddToQuery(IQueryable<Member> query, SearchInput input)
+    {
+        query = AddOrderToQuery(query, input.OrderBy, input.Order);
+
+        if (input.SearchBy != FilterBy.None &&
+            !string.IsNullOrWhiteSpace(input.Search))
+            query = AppendFilterBy(query, input.SearchBy, input.Search);
+        else if (!string.IsNullOrWhiteSpace(input.Search))
+            query = query.Include(m => m.Responsible)
+                         .Where(x => x.FirstName.Contains(input.Search));
+        return query;
+    }
+
+    private IQueryable<Member> AppendFilterBy(IQueryable<Member> query, FilterBy searchBy, string search)
+    {
+        var seachByQuery = (searchBy) switch
+        {
+            FilterBy.FirstName => query.Include(m => m.Responsible)
+                    .Where(x => x.FirstName.Contains(search)),
+            FilterBy.LastName => query.Include(m => m.Responsible)
+                    .Where(x => x.LastName.Contains(search)),
+            FilterBy.Document => query.Include(m => m.Responsible)
+                    .Where(x => x.Document.Document.Contains(search)),
+            FilterBy.None or _ => query.Include(m => m.Responsible),
+        };
+        return seachByQuery;
     }
 
     public Task Update(Member aggregate, CancellationToken _)

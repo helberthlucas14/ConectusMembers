@@ -47,7 +47,6 @@ namespace Conectus.Members.UnitTests.Application.Member.UpdateMember
             output.Document.Should().Be(input.Document);
 
             output.Address.Should().NotBeNull();
-            output.IsActive.Should().Be(input.IsActive);
             output.ResponsibleId.Should().Be(input.ResponsibleId);
         }
 

@@ -129,7 +129,6 @@ namespace Conectus.Member.UnitTests.Domain.Entity
             var newPhone = _fixture.GetValidPhoneNumber();
             var newDocument = _fixture.GetIdentifierDocument();
             var newAddress = _fixture.GetAddress();
-            var newIsActive = _fixture.GetRandomBoolean();
 
             member.Update(newFirstName,
                 newLastName,
@@ -137,8 +136,7 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                 newGender,
                 newPhone,
                 newDocument,
-                newAddress,
-                newIsActive);
+                newAddress);
 
             member.Should().NotBeNull();
             member.Id.Should().NotBeEmpty();
@@ -149,7 +147,6 @@ namespace Conectus.Member.UnitTests.Domain.Entity
             member.PhoneNumber.Should().Be(newPhone);
             member.Document.Should().Be(newDocument);
             member.Address.Should().Be(newAddress);
-            member.IsActive.Should().Be(newIsActive);
         }
 
 
@@ -307,8 +304,7 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                            validMember.Gender,
                            validMember.PhoneNumber,
                            validMember.Document,
-                           validMember.Address,
-                           isActive: validMember.IsActive);
+                           validMember.Address);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -361,8 +357,7 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                            validMember.Gender,
                            validMember.PhoneNumber,
                            validMember.Document,
-                           validMember.Address,
-                           isActive: validMember.IsActive);
+                           validMember.Address);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -406,8 +401,7 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                            validMember.Gender,
                            validMember.PhoneNumber,
                            validMember.Document,
-                           validMember.Address,
-                           isActive: validMember.IsActive);
+                           validMember.Address);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -461,8 +455,7 @@ namespace Conectus.Member.UnitTests.Domain.Entity
                            validMember.Gender,
                            validMember.PhoneNumber,
                            validMember.Document,
-                           validMember.Address, 
-                           isActive: validMember.IsActive);
+                           validMember.Address);
 
             action.Should()
                 .Throw<EntityValidationException>()

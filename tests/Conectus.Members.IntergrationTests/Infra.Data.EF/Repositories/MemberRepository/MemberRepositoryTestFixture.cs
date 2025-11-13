@@ -1,6 +1,7 @@
 ﻿using Bogus.Extensions.Brazil;
 using Conectus.Members.Domain.Entity;
 using Conectus.Members.Domain.Enum;
+using Conectus.Members.Domain.Repository.SearchableRepository;
 using Conectus.Members.Domain.ValueObject;
 using Conectus.Members.IntergrationTests.Base;
 using System.Text.RegularExpressions;
@@ -14,7 +15,10 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
     public class MemberRepositoryTestFixture
         : BaseFixture
     {
-        public Member GetExampleMember(bool isMinor = false, Guid? responsibleId = null)
+        public Member GetExampleMember(
+            bool isMinor = false,
+            Guid? responsibleId = null,
+            IdentifierDocument? document = null)
         {
             return new Member(
                   GetValidFirstName(),
@@ -22,7 +26,7 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
                   GetValidDateOfBirth(isMinor),
                   GetValidGender(),
                   GetValidPhoneNumber(),
-                  GetIdentifierDocument(),
+                  document ?? GetIdentifierDocument(),
                   GetAddress(),
                   isMinor ? responsibleId ?? Guid.NewGuid() : null);
         }
@@ -122,5 +126,63 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
 
             return members;
         }
+
+        public List<Member> GetExampleMembersListWithIdentifierDocuments(
+            List<IdentifierDocument> documents)
+         => documents.Select(document =>
+         {
+             var member = GetExampleMember(document: document);
+             return member;
+         }).ToList();
+
+        public List<Member> GetExampleMembersListWithFirstNames(List<string> lastNames)
+            => lastNames.Select(firstName =>
+        {
+            var member = GetExampleMember();
+            member.Update(firstName: firstName);
+            return member;
+        }).ToList();
+
+        public List<Member> GetExampleMembersListWithLastNames(List<string> names)
+          => names.Select(lastName =>
+         {
+             var member = GetExampleMember();
+             member.Update(lastName: lastName);
+             return member;
+         }).ToList();
+
+        public List<Member> CloneMembersListOrdered(
+            List<Member> membersList,
+            string orderBy,
+            SearchOrder order)
+        {
+            var listClone = new List<Member>(membersList);
+            var orderedEnumerable = (orderBy.ToLower(), order) switch
+            {
+                ("identifierDocument", SearchOrder.Asc) =>
+                listClone.OrderBy(x => x.FirstName)
+                         .ThenBy(x => x.Id),
+                ("identifierDocument", SearchOrder.Desc) =>
+                listClone.OrderByDescending(x => x.Document.Document)
+                         .ThenBy(x => x.Id),
+                ("firstName", SearchOrder.Asc) => listClone
+                    .OrderBy(x => x.FirstName)
+                    .ThenBy(x => x.Id),
+                ("firstName", SearchOrder.Desc) => listClone
+                    .OrderByDescending(x => x.FirstName)
+                    .ThenByDescending(x => x.Id),
+                ("lastName", SearchOrder.Desc) => listClone
+                        .OrderByDescending(x => x.LastName)
+                        .ThenBy(x => x.Id),
+                ("lastName", SearchOrder.Asc) => listClone.OrderBy(x => x.LastName),
+                ("id", SearchOrder.Asc) => listClone.OrderBy(x => x.Id),
+                ("id", SearchOrder.Desc) => listClone.OrderByDescending(x => x.Id),
+                ("createdat", SearchOrder.Asc) => listClone.OrderBy(x => x.CreatedAt),
+                ("createdat", SearchOrder.Desc) => listClone.OrderByDescending(x => x.CreatedAt),
+                _ => listClone.OrderBy(x => x.FirstName).ThenBy(x => x.Id),
+            };
+            return orderedEnumerable.ToList();
+        }
+
     }
 }

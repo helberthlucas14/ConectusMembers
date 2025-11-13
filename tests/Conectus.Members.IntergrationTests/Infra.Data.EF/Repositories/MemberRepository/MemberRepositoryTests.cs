@@ -1,6 +1,8 @@
 ﻿using Conectus.Members.Application.Exceptions;
 using Conectus.Members.Domain.Entity;
+using Conectus.Members.Domain.Enum;
 using Conectus.Members.Domain.Repository.SearchableRepository;
+using Conectus.Members.Domain.ValueObject;
 using Conectus.Members.Infra.Data.EF;
 using FluentAssertions;
 using FluentAssertions.Equivalency;
@@ -255,7 +257,7 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
             var MemberRepository = new Repository.MemberRepository(dbContext);
 
 
-            var searchInput = new SearchInput(1, 20, "", "", SearchOrder.Asc);
+            var searchInput = new SearchInput(1, 20, "", "", SearchOrder.Asc, FilterBy.None);
 
             var output = await MemberRepository.Search(searchInput, CancellationToken.None);
 
@@ -301,7 +303,7 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
 
             var MemberRepository = new Repository.MemberRepository(dbContext);
 
-            var searchInput = new SearchInput(1, 20, "", "", SearchOrder.Asc);
+            var searchInput = new SearchInput(1, 20, "", "", SearchOrder.Asc, FilterBy.None);
 
             var output = await MemberRepository.Search(searchInput, CancellationToken.None);
 
@@ -326,13 +328,13 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
         {
             ConectusMemberDbContext dbContext = _fixture.CreateDbContext();
             var exampleMembersList = _fixture.GetExampleMembersList(quantityMembersToGenerate);
-           
+
             await dbContext.AddRangeAsync(exampleMembersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
-            
+
             var MemberRepository = new Repository.MemberRepository(dbContext);
-            var searchInput = new SearchInput(page, perPage, "", "", SearchOrder.Asc);
-            
+            var searchInput = new SearchInput(page, perPage, "", "", SearchOrder.Asc, FilterBy.None);
+
             var output = await MemberRepository.Search(searchInput, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -347,7 +349,7 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
                 var exampleItem = exampleMembersList.Find(
                     Member => Member.Id == outputItem.Id
                 );
-                
+
                 exampleItem.Should().NotBeNull();
                 outputItem.FirstName.Should().Be(exampleItem.FirstName);
                 outputItem.LastName.Should().Be(exampleItem.LastName);
@@ -362,6 +364,264 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
                 outputItem.ResponsibleId.Should().Be(exampleItem.ResponsibleId);
                 outputItem.IsActive.Should().Be(exampleItem.IsActive);
                 outputItem.CreatedAt.Should().Be(exampleItem.CreatedAt);
+            }
+        }
+
+
+
+        [Theory(DisplayName = nameof(SearchByFirstName))]
+        [Trait("Integration/Infra.Data", "MemberRepository - Repositories")]
+        [InlineData("Ana", 1, 5, 1, 1)]
+        [InlineData("Beatriz", 1, 5, 1, 1)]
+        [InlineData("Lucas", 1, 5, 1, 1)]
+        [InlineData("Junior", 1, 5, 1, 1)]
+        [InlineData("Maris", 1, 5, 2, 2)]
+        public async Task SearchByFirstName(
+         string search,
+         int page,
+         int perPage,
+         int expectedQuantityItemsReturned,
+         int expectedQuantityTotalItems)
+        {
+            ConectusMemberDbContext dbContext = _fixture.CreateDbContext();
+            var exampleMembersList =
+                _fixture.GetExampleMembersListWithFirstNames(new List<string>() {
+                "Ana",
+                "Beatriz",
+                "Junior",
+                "Lucas",
+                "Maris",
+                "Maris",
+                });
+            await dbContext.AddRangeAsync(exampleMembersList);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var MemberRepository = new Repository.MemberRepository(dbContext);
+            var searchInput = new SearchInput(page,
+                perPage,
+                search,
+                "",
+                SearchOrder.Asc,
+                FilterBy.FirstName);
+
+            var output = await MemberRepository.Search(searchInput, CancellationToken.None);
+
+            output.Should().NotBeNull();
+            output.Items.Should().NotBeNull();
+            output.CurrentPage.Should().Be(searchInput.Page);
+            output.PerPage.Should().Be(searchInput.PerPage);
+            output.Total.Should().Be(expectedQuantityTotalItems);
+            output.Items.Should().HaveCount(expectedQuantityItemsReturned);
+            foreach (Member outputItem in output.Items)
+            {
+                var exampleItem = exampleMembersList.Find(
+                    Member => Member.Id == outputItem.Id
+                );
+                exampleItem.Should().NotBeNull();
+                outputItem.Should().NotBeNull();
+                outputItem.FirstName.Should().Be(exampleItem.FirstName);
+                outputItem.LastName.Should().Be(exampleItem.LastName);
+                outputItem.DateOfBirth.Should().Be(exampleItem.DateOfBirth);
+                outputItem.Gender.Should().Be(exampleItem.Gender);
+                outputItem.Address.Should().NotBeNull();
+                outputItem.Address.Should().Be(exampleItem.Address);
+                outputItem.PhoneNumber.Should().NotBeNull();
+                outputItem.PhoneNumber.Value.Should().Be(exampleItem.PhoneNumber.Value);
+                outputItem.Document.Should().NotBeNull();
+                outputItem.Document.Document.Should().Be(exampleItem.Document.Document);
+                outputItem.ResponsibleId.Should().Be(exampleItem.ResponsibleId);
+                outputItem.IsActive.Should().Be(exampleItem.IsActive);
+                outputItem.CreatedAt.Should().Be(exampleItem.CreatedAt);
+            }
+        }
+
+
+        [Theory(DisplayName = nameof(SearchByLastName))]
+        [Trait("Integration/Infra.Data", "MemberRepository - Repositories")]
+        [InlineData("Souza", 1, 5, 2, 2)]
+        [InlineData("Moreira", 1, 5, 0, 0)]
+        [InlineData("Alkmin", 1, 5, 1, 1)]
+        [InlineData("Lopes", 1, 5, 1, 1)]
+        [InlineData("Xavier", 1, 5, 2, 2)]
+        public async Task SearchByLastName(
+         string search,
+         int page,
+         int perPage,
+         int expectedQuantityItemsReturned,
+         int expectedQuantityTotalItems)
+        {
+            ConectusMemberDbContext dbContext = _fixture.CreateDbContext();
+            var exampleMembersList =
+                _fixture.GetExampleMembersListWithLastNames(new List<string>() {
+                "Souza",
+                "Xavier",
+                "Souza",
+                "Lopes",
+                "Alkmin",
+                "Xavier",
+                });
+            await dbContext.AddRangeAsync(exampleMembersList);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var MemberRepository = new Repository.MemberRepository(dbContext);
+            var searchInput = new SearchInput(page,
+                perPage,
+                search,
+                "",
+                SearchOrder.Asc,
+                FilterBy.LastName);
+
+            var output = await MemberRepository.Search(searchInput, CancellationToken.None);
+
+            output.Should().NotBeNull();
+            output.Items.Should().NotBeNull();
+            output.CurrentPage.Should().Be(searchInput.Page);
+            output.PerPage.Should().Be(searchInput.PerPage);
+            output.Total.Should().Be(expectedQuantityTotalItems);
+            output.Items.Should().HaveCount(expectedQuantityItemsReturned);
+            foreach (Member outputItem in output.Items)
+            {
+                var exampleItem = exampleMembersList.Find(
+                    Member => Member.Id == outputItem.Id
+                );
+                exampleItem.Should().NotBeNull();
+                outputItem.Should().NotBeNull();
+                outputItem.FirstName.Should().Be(exampleItem.FirstName);
+                outputItem.LastName.Should().Be(exampleItem.LastName);
+                outputItem.DateOfBirth.Should().Be(exampleItem.DateOfBirth);
+                outputItem.Gender.Should().Be(exampleItem.Gender);
+                outputItem.Address.Should().NotBeNull();
+                outputItem.Address.Should().Be(exampleItem.Address);
+                outputItem.PhoneNumber.Should().NotBeNull();
+                outputItem.PhoneNumber.Value.Should().Be(exampleItem.PhoneNumber.Value);
+                outputItem.Document.Should().NotBeNull();
+                outputItem.Document.Document.Should().Be(exampleItem.Document.Document);
+                outputItem.ResponsibleId.Should().Be(exampleItem.ResponsibleId);
+                outputItem.IsActive.Should().Be(exampleItem.IsActive);
+                outputItem.CreatedAt.Should().Be(exampleItem.CreatedAt);
+            }
+        }
+
+        [Theory(DisplayName = nameof(SearchByFirstName))]
+        [Trait("Integration/Infra.Data", "MemberRepository - Repositories")]
+        [InlineData(DocumentType.CPF, "173.814.400-32", 1, 5, 1, 1)]
+        [InlineData(DocumentType.CPF, "012.308.530-65", 1, 5, 1, 1)]
+        [InlineData(DocumentType.CPF, "845.970.430-04", 1, 5, 1, 1)]
+        [InlineData(DocumentType.CPF, "281.731.150-79", 1, 5, 1, 1)]
+        [InlineData(DocumentType.CPF, "369.586.050-20", 1, 5, 1, 1)]
+        public async Task SearchByIdentifierDocument(
+         DocumentType type,
+         string searchText,
+         int page,
+         int perPage,
+         int expectedQuantityItemsReturned,
+         int expectedQuantityTotalItems)
+        {
+            ConectusMemberDbContext dbContext = _fixture.CreateDbContext();
+            var exampleMembersList = _fixture.GetExampleMembersListWithIdentifierDocuments(
+                    new List<IdentifierDocument>()
+                    {
+                        new IdentifierDocument(type, searchText),
+                    });
+            await dbContext.AddRangeAsync(exampleMembersList);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var MemberRepository = new Repository.MemberRepository(dbContext);
+            var searchInput = new SearchInput(
+                page,
+                perPage,
+                searchText,
+                "identifierDocument",
+                SearchOrder.Asc,
+                FilterBy.Document);
+
+            var output = await MemberRepository.Search(searchInput, CancellationToken.None);
+
+            output.Should().NotBeNull();
+            output.Items.Should().NotBeNull();
+            output.CurrentPage.Should().Be(searchInput.Page);
+            output.PerPage.Should().Be(searchInput.PerPage);
+            output.Total.Should().Be(expectedQuantityTotalItems);
+            output.Items.Should().HaveCount(expectedQuantityItemsReturned);
+            foreach (Member outputItem in output.Items)
+            {
+                var exampleItem = exampleMembersList.Find(
+                    Member => Member.Id == outputItem.Id
+                );
+                exampleItem.Should().NotBeNull();
+                outputItem.Should().NotBeNull();
+                outputItem.FirstName.Should().Be(exampleItem.FirstName);
+                outputItem.LastName.Should().Be(exampleItem.LastName);
+                outputItem.DateOfBirth.Should().Be(exampleItem.DateOfBirth);
+                outputItem.Gender.Should().Be(exampleItem.Gender);
+                outputItem.Address.Should().NotBeNull();
+                outputItem.Address.Should().Be(exampleItem.Address);
+                outputItem.PhoneNumber.Should().NotBeNull();
+                outputItem.PhoneNumber.Value.Should().Be(exampleItem.PhoneNumber.Value);
+                outputItem.Document.Should().NotBeNull();
+                outputItem.Document.Document.Should().Be(exampleItem.Document.Document);
+                outputItem.ResponsibleId.Should().Be(exampleItem.ResponsibleId);
+                outputItem.IsActive.Should().Be(exampleItem.IsActive);
+                outputItem.CreatedAt.Should().Be(exampleItem.CreatedAt);
+            }
+        }
+
+        [Theory(DisplayName = nameof(SearchOrdered))]
+        [Trait("Integration/Infra.Data", "MemberRepository - Repositories")]
+        [InlineData("identifierDocument", "asc")]
+        [InlineData("identifierDocument", "desc")]
+        [InlineData("firstName", "asc")]
+        [InlineData("firstName", "desc")]
+        [InlineData("lastName", "asc")]
+        [InlineData("lastName", "desc")]
+        [InlineData("id", "asc")]
+        [InlineData("id", "desc")]
+        [InlineData("createdAt", "asc")]
+        [InlineData("createdAt", "desc")]
+        [InlineData("", "asc")]
+        public async Task SearchOrdered(
+        string orderBy,
+        string order
+    )
+        {
+            ConectusMemberDbContext dbContext = _fixture.CreateDbContext();
+            var exampleMembersList =
+                _fixture.GetExampleMembersList(10);
+            await dbContext.AddRangeAsync(exampleMembersList);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var MemberRepository = new Repository.MemberRepository(dbContext);
+            var searchOrder = order.ToLower() == "asc" ? SearchOrder.Asc : SearchOrder.Desc;
+            var searchInput = new SearchInput(1, 20, "", orderBy, searchOrder, FilterBy.None);
+
+            var output = await MemberRepository.Search(searchInput, CancellationToken.None);
+
+            var expectedOrderedList = _fixture.CloneMembersListOrdered(
+                exampleMembersList,
+                orderBy,
+                searchOrder
+            );
+            output.Should().NotBeNull();
+            output.Items.Should().NotBeNull();
+            output.CurrentPage.Should().Be(searchInput.Page);
+            output.PerPage.Should().Be(searchInput.PerPage);
+            output.Total.Should().Be(exampleMembersList.Count);
+            output.Items.Should().HaveCount(exampleMembersList.Count);
+            for (int indice = 0; indice < expectedOrderedList.Count; indice++)
+            {
+                var expectedItem = expectedOrderedList[indice];
+                var outputItem = output.Items[indice];
+                expectedItem.Should().NotBeNull();
+                outputItem.Should().NotBeNull();
+                outputItem.FirstName.Should().Be(expectedItem.FirstName);
+                outputItem.LastName.Should().Be(expectedItem.LastName);
+                outputItem.DateOfBirth.Should().Be(expectedItem.DateOfBirth);
+                outputItem.Gender.Should().Be(expectedItem.Gender);
+                outputItem.Address.Should().NotBeNull();
+                outputItem.Address.Should().Be(expectedItem.Address);
+                outputItem.PhoneNumber.Should().NotBeNull();
+                outputItem.PhoneNumber.Value.Should().Be(expectedItem.PhoneNumber.Value);
+                outputItem.Document.Should().NotBeNull();
+                outputItem.Document.Document.Should().Be(expectedItem.Document.Document);
+                outputItem.ResponsibleId.Should().Be(expectedItem.ResponsibleId);
+                outputItem.IsActive.Should().Be(expectedItem.IsActive);
+                outputItem.CreatedAt.Should().Be(expectedItem.CreatedAt);
             }
         }
     }
