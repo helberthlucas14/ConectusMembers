@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Conectus.Members.IntergrationTests.Application.UseCases.Member.CreateMember
+{
+    public class CreateMemberTestDataGenerator
+    {
+        public static IEnumerable<object[]> GetInvalidCreateMemberInputs(int times = 12)
+        {
+            var fixture = new CreateMemberTestFixture();
+            var invalidInputsList = new List<object[]>();
+            var totalInvalidCases = 8;
+
+            for (int index = 0; index < times; index++)
+            {
+                switch (index % totalInvalidCases)
+                {
+                    case 0:
+                        invalidInputsList.Add(new object[] {
+                        fixture.GetInvalidInputShortFirstName(),
+                        "FirstName should be at least 3 characters long"
+                    });
+                        break;
+                    case 1:
+                        invalidInputsList.Add(new object[] {
+                        fixture.GetInvalidInputLongFirstName(),
+                        "FirstName should be less or equal 50 characters long"
+                    });
+                        break;
+                    case 2:
+                        invalidInputsList.Add(new object[] {
+                        fixture.GetInvalidInputShortLastName(),
+                        "LastName should be at least 3 characters long"
+                    });
+                        break;
+                    case 3:
+                        invalidInputsList.Add(new object[] {
+                        fixture.GetInvalidInputLongLastName(),
+                        "LastName should be less or equal 50 characters long"
+                    });
+                        break;
+                    case 4:
+                        invalidInputsList.Add(new object[] {
+                        fixture.GetInvalidInputShortFirstNameNull(),
+                        "FirstName should not be empty or null"
+                    });
+                        break;
+                    case 5:
+                        invalidInputsList.Add(new object[] {
+                        fixture.GetInvalidInputShortLastNameNull(),
+                        "LastName should not be empty or null"
+                    });
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+
+            return invalidInputsList;
+        }
+    }
+}

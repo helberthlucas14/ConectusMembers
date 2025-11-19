@@ -27,10 +27,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Application\UseCases\Member\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\src\Conectus.Members.Domain\Conectus.Members.Domain.csproj" />
 		<ProjectReference Include="..\..\src\Conectus.Members.Infra.Data.EF\Conectus.Members.Infra.Data.EF.csproj" />
 	</ItemGroup>

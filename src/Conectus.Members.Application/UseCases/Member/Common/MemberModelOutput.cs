@@ -13,6 +13,7 @@ namespace Conectus.Members.Application.UseCases.Member.Common
         public required Gender Gender { get; set; }
         public required string PhoneNumber { get; set; }
         public Guid? ResponsibleId { get; set; }
+        public MemberModelOutput? Responsible { get; set; }
         public required AddressDto Address { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -30,10 +31,11 @@ namespace Conectus.Members.Application.UseCases.Member.Common
                 PhoneNumber = member.PhoneNumber.Value,
                 DateOfBirth = member.DateOfBirth,
                 Address = AddressDto.FromDomain(member.Address),
-                ResponsibleId = member.ResponsibleId,
                 IsActive = member.IsActive,
                 CreatedAt = member.CreatedAt,
-                IsMinor = member.IsMinor
+                IsMinor = member.IsMinor,
+                ResponsibleId = member.ResponsibleId,
+                Responsible = member.Responsible is not null ? FromMember(member.Responsible) : null
             };
         }
     }

@@ -22,7 +22,7 @@ namespace Conectus.Members.Application.UseCases.Member.CreateMember
             Gender gender,
             string phoneNumber,
             AddressDto address,
-            Guid? responsibleId)
+            Guid? responsibleId = null)
         {
             Document = document;
             FirstName = firstName;

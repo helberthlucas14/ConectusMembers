@@ -35,6 +35,8 @@ namespace Conectus.Members.Application.UseCases.Member.Common
                 dto.District,
                 dto.City,
                 dto.State,
-                dto.ZipCode);
+                dto.ZipCode,
+                dto.Latitude, 
+                dto.Longitude);
     }
 }
