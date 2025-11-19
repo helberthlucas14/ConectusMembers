@@ -35,10 +35,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Application\UseCases\Member\ListMember\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Update="xunit.runner.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
