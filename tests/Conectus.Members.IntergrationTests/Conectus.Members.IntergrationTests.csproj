@@ -31,4 +31,10 @@
 		<ProjectReference Include="..\..\src\Conectus.Members.Infra.Data.EF\Conectus.Members.Infra.Data.EF.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Application\UseCases\Member\GetMember\" />
+	  <Folder Include="Application\UseCases\Member\ListMember\" />
+	  <Folder Include="Application\UseCases\Member\UpdateMember\" />
+	</ItemGroup>
+
 </Project>
