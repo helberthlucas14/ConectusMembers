@@ -1,0 +1,17 @@
+services:
+  conectus.member.fb:
+    container_name: conectusDb-e2e
+    hostname: conectusDb-e2e
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 14033:1433
+    environment:
+      SA_PASSWORD: "SqlServer2019!"
+      ACCEPT_EULA: "Y"
+    networks:
+      - service_member_network
+    restart: always
+
+networks:
+  service_member_network:
+    driver: bridge
