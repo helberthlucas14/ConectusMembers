@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Conectus.Members.Infra.CrossCutting.Commons.Extensions
+﻿namespace Conectus.Members.Infra.CrossCutting.Commons.Extensions
 {
     public static class StringExtension
     {
