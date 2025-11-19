@@ -8,7 +8,8 @@ using System.Text.RegularExpressions;
 
 namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
 {
-    [CollectionDefinition(nameof(MemberRepositoryTestFixture))]
+    [CollectionDefinition(nameof(MemberRepositoryTestFixture), 
+        DisableParallelization = true)]
     public class MemberRepositoryTestFixtureCollection
     : ICollectionFixture<MemberRepositoryTestFixture>
     { }

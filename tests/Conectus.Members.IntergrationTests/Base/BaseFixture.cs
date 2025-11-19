@@ -11,7 +11,9 @@ namespace Conectus.Members.IntergrationTests.Base
 
         protected Faker Faker { get; set; }
 
-        public ConectusMemberDbContext CreateDbContext(bool preserveData = false, string? dbName = "")
+        public ConectusMemberDbContext CreateDbContext(
+            bool preserveData = false,
+            string? dbName = "")
         {
             var context = new ConectusMemberDbContext(
                 new DbContextOptionsBuilder<ConectusMemberDbContext>()

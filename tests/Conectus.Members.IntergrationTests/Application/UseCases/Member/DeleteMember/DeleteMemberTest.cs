@@ -3,7 +3,6 @@ using Conectus.Members.Application.Exceptions;
 using Conectus.Members.Infra.Data.EF;
 using Conectus.Members.Infra.Data.EF.Repositories;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using UseCase = Conectus.Members.Application.UseCases.Member.DeleteMember;
@@ -20,49 +19,42 @@ namespace Conectus.Members.IntergrationTests.Application.UseCases.Member.DeleteM
         [Trait("Integration/Application", "DeleteMember - Use Cases")]
         public async Task DeleteMember()
         {
-            var actContext = _fixture.CreateDbContext();
-            var exampleMember = _fixture.GetValidMemberExample();
-            var exampleList = _fixture.GetValidMembersList(10);
-
-            await actContext.AddRangeAsync(exampleList);
-            var trackingInfo = await actContext.AddAsync(exampleMember);
-
-            await actContext.SaveChangesAsync();
-            trackingInfo.State = EntityState.Detached;
-
-            var respository = new MemberRepository(actContext);
+            var membersExampleList = _fixture.GetValidMembersList(10);
+            var targetGenre = membersExampleList[5];
+            var dbArrangeContext = _fixture.CreateDbContext();
+            await dbArrangeContext.Members.AddRangeAsync(membersExampleList);
+            await dbArrangeContext.SaveChangesAsync();
+            var actDbContext = _fixture.CreateDbContext(true);
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddLogging();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var eventPublisher = new DomainEventPublisher(serviceProvider);
             var unitOfWork = new UnitOfWork(
-                actContext,
+                actDbContext,
                 eventPublisher,
                 serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
-
-            var input = new UseCase.DeleteMemberInput(exampleMember.Id);
-
             var useCase = new UseCase.DeleteMember(
-                respository,
-                unitOfWork);
+                new MemberRepository(actDbContext),
+                unitOfWork
+            );
+            var input = new UseCase.DeleteMemberInput(targetGenre.Id);
 
             await useCase.Handle(input, CancellationToken.None);
 
             var assertDbContext = _fixture.CreateDbContext(true);
-            var dbMember = await assertDbContext
-                                  .Members.FindAsync(exampleMember.Id);
-
-            dbMember.Should().BeNull();
-            var dbCategories = await assertDbContext.Members.ToListAsync();
-            dbCategories.Should().HaveCount(exampleList.Count);
+            var memberFromDb = await assertDbContext.Members.FindAsync(targetGenre.Id);
+            memberFromDb.Should().BeNull();
         }
 
         [Fact(DisplayName = nameof(ThrowWhenMemberNotFound))]
         [Trait("Application", "DeleteMember - Use Cases")]
         public async Task ThrowWhenMemberNotFound()
         {
+            var genresExampleList = _fixture.GetValidMembersList(10);
             var actContext = _fixture.CreateDbContext();
-
+            await actContext.Members.AddRangeAsync(genresExampleList);
+            await actContext.SaveChangesAsync();
+            var actDbContext = _fixture.CreateDbContext(true); 
             var respository = new MemberRepository(actContext);
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddLogging();

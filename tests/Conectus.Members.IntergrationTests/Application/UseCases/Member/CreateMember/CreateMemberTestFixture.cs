@@ -66,7 +66,7 @@ namespace Conectus.Members.IntergrationTests.Application.UseCases.Member.CreateM
         }
     }
     
-    [CollectionDefinition(nameof(CreateMemberTestFixture))]
+    [CollectionDefinition(nameof(CreateMemberTestFixture) , DisableParallelization = true)]
     public class CreateMemberTestsCollection 
         : ICollectionFixture<CreateMemberTestFixture>
     {

@@ -299,12 +299,9 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
         public async Task SearchRetursEmptyWhenPersistenceIsEmpty()
         {
             ConectusMemberDbContext dbContext = _fixture.CreateDbContext();
-            var exampleMembersList = _fixture.GetExampleMembersList(10);
-
             var MemberRepository = new Repository.MemberRepository(dbContext);
-
             var searchInput = new SearchInput(1, 20, "", "", SearchOrder.Asc, FilterBy.None);
-
+            
             var output = await MemberRepository.Search(searchInput, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -515,15 +512,16 @@ namespace Conectus.Members.IntergrationTests.Infra.Data.EF.Repositories
          int expectedQuantityItemsReturned,
          int expectedQuantityTotalItems)
         {
-            ConectusMemberDbContext dbContext = _fixture.CreateDbContext();
+            ConectusMemberDbContext arranjeDbContext = _fixture.CreateDbContext();
             var exampleMembersList = _fixture.GetExampleMembersListWithIdentifierDocuments(
                     new List<IdentifierDocument>()
                     {
                         new IdentifierDocument(type, searchText),
                     });
-            await dbContext.AddRangeAsync(exampleMembersList);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
-            var MemberRepository = new Repository.MemberRepository(dbContext);
+            await arranjeDbContext.AddRangeAsync(exampleMembersList);
+            await arranjeDbContext.SaveChangesAsync();
+
+            var MemberRepository = new Repository.MemberRepository(arranjeDbContext);
             var searchInput = new SearchInput(
                 page,
                 perPage,
