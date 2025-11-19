@@ -1,16 +1,12 @@
 ﻿using Conectus.Members.Application;
-using Conectus.Members.Application.Interfaces;
-using Conectus.Members.Application.UseCases.Member.Common;
 using Conectus.Members.Application.UseCases.Member.CreateMember;
 using Conectus.Members.Domain.Exceptions;
-using Conectus.Members.Domain.Repository;
 using Conectus.Members.Infra.Data.EF;
 using Conectus.Members.Infra.Data.EF.Repositories;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Moq;
 using UseCase = Conectus.Members.Application.UseCases.Member.CreateMember;
 
 namespace Conectus.Members.IntergrationTests.Application.UseCases.Member.CreateMember

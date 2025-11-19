@@ -65,7 +65,9 @@ namespace Conectus.Members.IntergrationTests.Application.UseCases.Member.Common
             GetRandomBoolean() ? Gender.Male :
             Gender.Female;
         public bool GetRandomBoolean() => new Random().NextDouble() < 0.5;
-        public DomainEntity.Member GetValidMemberExample(bool isMinor = false)
+        public DomainEntity.Member GetValidMemberExample(
+            bool isMinor = false,
+            Guid? responsibleId = null)
         {
             return new DomainEntity.Member(
                   GetValidFirstName(),
@@ -75,7 +77,7 @@ namespace Conectus.Members.IntergrationTests.Application.UseCases.Member.Common
                   GetValidPhoneNumber(),
                   GetValidDocument(),
                   GetAddress(),
-                  isMinor ? Guid.NewGuid() : null);
+                 responsibleId);
         }
         public List<DomainEntity.Member> GetValidMembersList(int length = 10)
         {

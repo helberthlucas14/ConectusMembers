@@ -6,7 +6,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Moq;
 using UseCase = Conectus.Members.Application.UseCases.Member.DeleteMember;
 
 namespace Conectus.Members.IntergrationTests.Application.UseCases.Member.DeleteMember
